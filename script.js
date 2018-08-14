@@ -21,11 +21,11 @@ var datasets = [
       }
     ];
 var gdatasets = [
-        {
-            label: "Iterations v J (Cost) ",
-            backgroundColor: '#2196F3',
-            borderColor: '#ffbb00',
-            data: gd_plot
+    {
+        label: "Iterations v J (Cost)",
+        backgroundColor: '#2196F3',
+        borderColor: '#ffbb00',
+        data: gd_plot
       }
     ];
 var scatterChart = new Chart(ctx, {
@@ -42,6 +42,22 @@ var scatterChart = new Chart(ctx, {
         }
     }
 });
+var gradientDescentChart = new Chart(cty, {
+    type: 'scatter',
+    data: {
+        datasets: gdatasets
+    },
+    options: {
+        showLine: true,
+        scales: {
+            xAxes: [{
+                type: 'linear',
+                position: 'bottom'
+            }]
+        }
+    }
+});
+
 scatterChart.update();
 computeCost();
 
@@ -61,7 +77,7 @@ function plotRLine(ts_plot, theta, datasets) {
     let xmin = Math.min.apply(Math, ts_plot.map(function (o) {
         return o.x;
     }));
-    for (var i = xmin; i <= xmax; i+=0.1) {
+    for (var i = xmin; i <= xmax; i += 0.1) {
         h = theta[0] + (theta[1] * i);
         rg_plot.push({
             x: i,
@@ -70,23 +86,23 @@ function plotRLine(ts_plot, theta, datasets) {
     }
     let gdatasets = {};
     let temp = datasets.indexOf(getDatagraph('Regression Line'));
-    
-    if (temp == -1) {                
+
+    if (temp == -1) {
         gdatasets.label = 'Regression Line';
         gdatasets.data = rg_plot;
         gdatasets.backgroundColor = '#ff0000';
         gdatasets.borderColor = '#4e00ff';
         datasets.push(gdatasets);
-    } else {        
+    } else {
         gdatasets = getDatagraph('Regression Line');
         datasets.splice(temp, 1);
-        gdatasets.data =[];
+        gdatasets.data = [];
         gdatasets.backgroundColor = '#ff0000';
         gdatasets.borderColor = '#4e00ff';
-        gdatasets.data =rg_plot;
+        gdatasets.data = rg_plot;
         datasets.push(gdatasets);
-    }   
-     
+    }
+
     scatterChart.update();
 }
 
@@ -95,35 +111,27 @@ function plotDataGD(iter, J) {
         x: iter,
         y: J
     });
-    
+
     gdatasets[0].data = gd_plot;
-    
-    var gradientDescentChart = new Chart(cty, {
-        type: 'scatter',
-        data: {
-            datasets: gdatasets
-        },
-        options: {
-            showLine: true,
-            scales: {
-                xAxes: [{
-                    type: 'linear',
-                    position: 'bottom'
-            }]
-            }
-        }
-    });
-    
     gradientDescentChart.update();
 }
 
-function clearPlots(){
-    let gdatasets = {};
-    let temp = datasets.indexOf(getDatagraph('Regression Line'));
-    if (temp != -1) {  
-        gdatasets = getDatagraph('Regression Line');
+function clearPlots() {
+    let rdatasets = {};
+    let temp = datasets.indexOf(getDatagraph(datasets,'Regression Line'));
+    //console.log(datasets);
+   // console.log(getDatagraph('Regression Line'));
+    if (temp != -1) {
+        rdatasets = getDatagraph(datasets,'Regression Line');
         datasets.splice(temp, 1);
         scatterChart.update();
+    }
+    
+    let temp2 = gdatasets.indexOf(getDatagraph(gdatasets,'Iterations v J (Cost)'));
+    if (temp2 != -1) {
+        gdatasets = getDatagraph(gdatasets,'Iterations v J (Cost)');
+        /*gradientDescentChart.destroy();*/        
+        gradientDescentChart.update();
     }
 }
 
@@ -171,12 +179,12 @@ function gradientDescent() {
     output.innerHTML += 'J : ' + J;
     output.innerHTML += '<br>theta : ' + theta;
     output.innerHTML += '<br>h(x) : ' + theta[0] + ' + ' + theta[1] + 'x';
-    
+
     plotRLine(ts_plot, theta, datasets);
 }
 
-function getDatagraph(label) {
-    for (let item of datasets) {        
+function getDatagraph(datasets,label) {
+    for (let item of datasets) {
         if (item.label == label) return item;
     }
     return "Plot does not exist";
