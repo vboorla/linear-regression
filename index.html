@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Minima for Cost Function</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="libs/Chart.min.js"></script>
+    <script src="libs/jquery-3.3.1.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script> -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+    <div class="wrapper">
+        <h1>Cost Function & Gradient Descent</h1>
+        <h2>Minima for the Cost Function! </h2>
+        <p>Alpha<input id="alpha" type="number" value="0.01" />
+            Iterations<input id="iter" type="number" value="10" />
+        <input id="startGD" type="button" value="Generate" onclick="startTime()"/>
+        <input id="stopGD" type="button" value="Flush"  onclick="clearPlots()">
+        </p>
+        <div id="canvas-holder" style="float:left;">
+            <canvas id="scatterChart" class="canvas" width="400" height="450" backgroundColor="#CC7722";></canvas>
+        </div>
+        <div id="canvas-holder" style="float:right;">
+        <canvas id="gradientDescentChart" class="canvas" width="400" height="450" backgroundColor="#CC7722"></canvas>
+        </div>
+        <div id="output"></div>    
+    </div>
+    <script src="ex1data1.js"></script>
+    <script src="script.js"></script>    
+</body>
+
+</html>
