@@ -127,12 +127,12 @@ function clearPlots() {
         scatterChart.update();
     }
     
-    let temp2 = gdatasets.indexOf(getDatagraph(gdatasets,'Iterations v J (Cost)'));
+    /*let temp2 = gdatasets.indexOf(getDatagraph(gdatasets,'Iterations v J (Cost)'));
     if (temp2 != -1) {
         gdatasets = getDatagraph(gdatasets,'Iterations v J (Cost)');
-        /*gradientDescentChart.destroy();*/        
+        gradientDescentChart.destroy();        
         gradientDescentChart.update();
-    }
+    }*/
 }
 
 function computeCost() {
