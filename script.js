@@ -2,7 +2,7 @@ var ctx = document.getElementById("scatterChart");
 var cty = document.getElementById("gradientDescentChart");
 var ts_plot = [];
 var gd_plot = [];
-var theta = [1.0, 1.0];
+var theta = [0.0, 0.0];
 var J = 0.0;
 
 for (var i = 0; i < trainingSet.length; i++) {
@@ -59,7 +59,7 @@ var gradientDescentChart = new Chart(cty, {
 });
 
 scatterChart.update();
-computeCost();
+//computeCost();
 
 function startTime() {
     gradientDescent();
@@ -85,8 +85,8 @@ function plotRLine(ts_plot, theta, datasets) {
         });
     }
     let gdatasets = {};
-    let temp = datasets.indexOf(getDatagraph(datasets,'Regression Line'));
-    
+    let temp = datasets.indexOf(getDatagraph(datasets, 'Regression Line'));
+
     if (temp == -1) {
         gdatasets.label = 'Regression Line';
         gdatasets.data = rg_plot;
@@ -94,7 +94,7 @@ function plotRLine(ts_plot, theta, datasets) {
         gdatasets.borderColor = '#4e00ff';
         datasets.push(gdatasets);
     } else {
-        gdatasets = getDatagraph(datasets,'Regression Line');
+        gdatasets = getDatagraph(datasets, 'Regression Line');
         datasets.splice(temp, 1);
         gdatasets.data = [];
         gdatasets.backgroundColor = '#ff0000';
@@ -118,15 +118,15 @@ function plotDataGD(iter, J) {
 
 function clearPlots() {
     let rdatasets = {};
-    let temp = datasets.indexOf(getDatagraph(datasets,'Regression Line'));
+    let temp = datasets.indexOf(getDatagraph(datasets, 'Regression Line'));
     //console.log(datasets);
-   // console.log(getDatagraph('Regression Line'));
+    // console.log(getDatagraph('Regression Line'));
     if (temp != -1) {
-        rdatasets = getDatagraph(datasets,'Regression Line');
+        rdatasets = getDatagraph(datasets, 'Regression Line');
         datasets.splice(temp, 1);
         scatterChart.update();
     }
-    
+
     /*let temp2 = gdatasets.indexOf(getDatagraph(gdatasets,'Iterations v J (Cost)'));
     if (temp2 != -1) {
         gdatasets = getDatagraph(gdatasets,'Iterations v J (Cost)');
@@ -140,17 +140,17 @@ function computeCost() {
     let prediction = 0;
     let sqrE = 0;
     J = 0;
-    let theta_zero= parseFloat(theta[0]);
-    let theta_one= parseFloat(theta[1]);
-    let x= 0; let y = 0;
-    
+    let theta_zero = parseFloat(theta[0]);
+    let theta_one = parseFloat(theta[1]);
+    let x = 0;
+    let y = 0;
     
     for (var i = 0; i < m; i++) {
-        x = parseFloat((ts_plot[i].x).toFixed(3));    
+        x = parseFloat((ts_plot[i].x).toFixed(3));
         y = parseFloat((ts_plot[i].y).toFixed(3));
-        prediction = theta_zero + (theta_one*x);
+        prediction = theta_zero + (theta_one * x);
         sqrE += Math.pow((prediction - y), 2);
-        }
+    }
     J = sqrE / (2 * m);
     return J.toFixed(3);
 }
@@ -166,38 +166,41 @@ function gradientDescent() {
     let output = document.getElementById("output");
     let m = ts_plot.length;
     let h = 0;
-    let J = 0;//computeCost();
+    let J = 0; 
     output.innerHTML = '';
     gd_plot = [];
     let x = 0;
+    let y =0;
+    
+    
     
     for (var j = 0; j < iterations; j++) {
+        t0Sum=0;
+        t1Sum=0;
         for (var i = 0; i < m; i++) {
             x = ts_plot[i].x;
             y = ts_plot[i].y;
             h = theta[0] + (theta[1] * x);
+            
             t0Sum += (h - y);
-            t1Sum += ((h - y) * x);           
+            t1Sum += ((h - y) * x);
         }
-        theta_zero = theta[0] - ((alpha / m) * t0Sum);
-        theta_one = theta[1] - ((alpha / m) * t1Sum);
-        
+        theta_zero =  theta[0] - ((alpha / m) * t0Sum); //
+        theta_one = theta[1] -  ((alpha / m) * t1Sum); //
         theta[0] = theta_zero;
         theta[1] = theta_one;
         J = computeCost();
-        console.log('J : ' + J);
-        //console.log('theta: ' + theta);
-        //console.log('alpha: ' + alpha);
         plotDataGD(j, J);
-    }
-    output.innerHTML += 'J : ' + J;
-    output.innerHTML += '<br>theta : ' + theta;
-    output.innerHTML += '<br>h(x) : ' + theta[0] + ' + ' + theta[1] + 'x';
 
+    }
+
+    output.innerHTML += '<br>J after '+j+' iterations : ' + J;
+    //output.innerHTML += '<br>theta '+j+' : ' + theta;
+    output.innerHTML += '<br>h(x) : ' + (theta[0]).toPrecision(3) + ' + ' + (theta[1]).toPrecision(3) + 'x';    
     plotRLine(ts_plot, theta, datasets);
 }
 
-function getDatagraph(datasets,label) {
+function getDatagraph(datasets, label) {
     for (let item of datasets) {
         if (item.label == label) return item;
     }
