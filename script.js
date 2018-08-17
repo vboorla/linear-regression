@@ -59,9 +59,9 @@ var gradientDescentChart = new Chart(cty, {
 });
 
 scatterChart.update();
-//computeCost();
 
-function startTime() {
+function startTimer() {
+    // window.setInterval(console.log('hello'),1000);
     gradientDescent();
 }
 
@@ -84,23 +84,23 @@ function plotRLine(ts_plot, theta, datasets) {
             y: h
         });
     }
-    let gdatasets = {};
+    let rdatasets = {};
     let temp = datasets.indexOf(getDatagraph(datasets, 'Regression Line'));
 
     if (temp == -1) {
-        gdatasets.label = 'Regression Line';
-        gdatasets.data = rg_plot;
-        gdatasets.backgroundColor = '#ff0000';
-        gdatasets.borderColor = '#4e00ff';
-        datasets.push(gdatasets);
+        rdatasets.label = 'Regression Line';
+        rdatasets.data = rg_plot;
+        rdatasets.backgroundColor = '#ff0000';
+        rdatasets.borderColor = '#4e00ff';
+        datasets.push(rdatasets);
     } else {
-        gdatasets = getDatagraph(datasets, 'Regression Line');
+        rdatasets = getDatagraph(datasets, 'Regression Line');
         datasets.splice(temp, 1);
-        gdatasets.data = [];
-        gdatasets.backgroundColor = '#ff0000';
-        gdatasets.borderColor = '#4e00ff';
-        gdatasets.data = rg_plot;
-        datasets.push(gdatasets);
+        rdatasets.data = [];
+        rdatasets.backgroundColor = '#ff0000';
+        rdatasets.borderColor = '#4e00ff';
+        rdatasets.data = rg_plot;
+        datasets.push(rdatasets);
     }
 
     scatterChart.update();
@@ -112,27 +112,63 @@ function plotDataGD(iter, J) {
         y: J
     });
 
-    gdatasets[0].data = gd_plot;
+    let gd_datasets = {};
+    let temp = gdatasets.indexOf(getDatagraph(gdatasets, 'Iterations v J (Cost)'));
+
+    if (temp == -1) {
+        gd_datasets.label = 'Iterations v J (Cost)';
+        gd_datasets.data = gd_plot;
+        gd_datasets.backgroundColor = '#2196F3';
+        gd_datasets.borderColor = '#ffbb00';
+        gdatasets.push(gd_datasets);
+    } else {
+        gd_datasets = getDatagraph(gdatasets, 'Iterations v J (Cost)');
+        gdatasets.splice(0);
+        gd_datasets.data = [];
+        gd_datasets.backgroundColor = '#2196F3';
+        gd_datasets.borderColor = '#ffbb00';
+        gd_datasets.data = gd_plot;
+        gdatasets.push(gd_datasets);
+    }
+
+    /*if (gradientDescentChart == undefined) {
+        gradientDescentChart = new Chart(cty, {
+            type: 'scatter',
+            data: {
+                datasets: gdatasets
+            },
+            options: {
+                showLine: true,
+                scales: {
+                    xAxes: [{
+                        type: 'linear',
+                        position: 'bottom'
+            }]
+                }
+            }
+        });
+    
+       gradientDescentChart.update(); 
+    }*/
+    //gdatasets[0].data = gd_plot;
     gradientDescentChart.update();
 }
 
 function clearPlots() {
-    let rdatasets = {};
+
     let temp = datasets.indexOf(getDatagraph(datasets, 'Regression Line'));
-    //console.log(datasets);
-    // console.log(getDatagraph('Regression Line'));
     if (temp != -1) {
-        rdatasets = getDatagraph(datasets, 'Regression Line');
         datasets.splice(temp, 1);
         scatterChart.update();
     }
-
-    /*let temp2 = gdatasets.indexOf(getDatagraph(gdatasets,'Iterations v J (Cost)'));
+    let temp2 = gdatasets.indexOf(getDatagraph(gdatasets, 'Iterations v J (Cost)'));
     if (temp2 != -1) {
-        gdatasets = getDatagraph(gdatasets,'Iterations v J (Cost)');
-        gradientDescentChart.destroy();        
-        gradientDescentChart.update();
-    }*/
+        gdatasets.splice(0);
+        gradientDescentChart.clear();
+    }
+    J = 0.0;
+    theta = [0.0, 0.0];
+    output.innerHTML = '';
 }
 
 function computeCost() {
@@ -144,7 +180,7 @@ function computeCost() {
     let theta_one = parseFloat(theta[1]);
     let x = 0;
     let y = 0;
-    
+
     for (var i = 0; i < m; i++) {
         x = parseFloat((ts_plot[i].x).toFixed(3));
         y = parseFloat((ts_plot[i].y).toFixed(3));
@@ -166,38 +202,33 @@ function gradientDescent() {
     let output = document.getElementById("output");
     let m = ts_plot.length;
     let h = 0;
-    let J = 0; 
+    let J = 0;
     output.innerHTML = '';
     gd_plot = [];
     let x = 0;
-    let y =0;
-    
-    
-    
+    let y = 0;
+
     for (var j = 0; j < iterations; j++) {
-        t0Sum=0;
-        t1Sum=0;
+        t0Sum = 0;
+        t1Sum = 0;
         for (var i = 0; i < m; i++) {
             x = ts_plot[i].x;
             y = ts_plot[i].y;
             h = theta[0] + (theta[1] * x);
-            
+
             t0Sum += (h - y);
             t1Sum += ((h - y) * x);
         }
-        theta_zero =  theta[0] - ((alpha / m) * t0Sum); //
-        theta_one = theta[1] -  ((alpha / m) * t1Sum); //
+        theta_zero = theta[0] - ((alpha / m) * t0Sum); //
+        theta_one = theta[1] - ((alpha / m) * t1Sum); //
         theta[0] = theta_zero;
         theta[1] = theta_one;
         J = computeCost();
         plotDataGD(j, J);
-
+        plotRLine(ts_plot, theta, datasets);
     }
-
-    output.innerHTML += '<br>J after '+j+' iterations : ' + J;
-    //output.innerHTML += '<br>theta '+j+' : ' + theta;
-    output.innerHTML += '<br>h(x) : ' + (theta[0]).toPrecision(3) + ' + ' + (theta[1]).toPrecision(3) + 'x';    
-    plotRLine(ts_plot, theta, datasets);
+    output.innerHTML += '<br>J after ' + j + ' iterations : ' + J;
+    output.innerHTML += '<br>h(x) : ' + (theta[0]).toPrecision(3) + ' + ' + (theta[1]).toPrecision(3) + 'x';
 }
 
 function getDatagraph(datasets, label) {

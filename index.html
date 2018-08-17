@@ -17,8 +17,9 @@
         <h2>Minima for the Cost Function! </h2>
         <p>Alpha<input id="alpha" type="number" value="0.01" />
             Iterations<input id="iter" type="number" value="10" />
-        <input id="startGD" type="button" value="Generate" onclick="startTime()"/>
-        <input id="stopGD" type="button" value="Flush"  onclick="clearPlots()">
+        <input id="startGD" type="button" value="Generate" onclick="startTimer()"/>
+        <input id="stopGD" type="button" value="Stop" onclick="stopTimer()"/>
+        <input id="flushGD" type="button" value="Flush"  onclick="clearPlots()">
         </p>
         <div id="canvas-holder" style="float:left;">
             <canvas id="scatterChart" class="canvas" width="400" height="450" backgroundColor="#CC7722";></canvas>
